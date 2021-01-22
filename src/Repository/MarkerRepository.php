@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Markers;
+use App\Entity\Marker;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Markers|null find($id, $lockMode = null, $lockVersion = null)
- * @method Markers|null findOneBy(array $criteria, array $orderBy = null)
- * @method Markers[]    findAll()
- * @method Markers[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Marker|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Marker|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Marker[]    findAll()
+ * @method Marker[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MarkersRepository extends ServiceEntityRepository
+class MarkerRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Markers::class);
+        parent::__construct($registry, Marker::class);
     }
 
     // /**
-    //  * @return Markers[] Returns an array of Markers objects
+    //  * @return Marker[] Returns an array of Marker objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class MarkersRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Markers
+    public function findOneBySomeField($value): ?Marker
     {
         return $this->createQueryBuilder('m')
             ->andWhere('m.exampleField = :val')

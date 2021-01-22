@@ -3,14 +3,15 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\MarkersRepository;
+use App\Repository\MarkerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Service\UploaderHelper;
 
 /**
  * @ApiResource()
- * @ORM\Entity(repositoryClass=MarkersRepository::class)
+ * @ORM\Entity(repositoryClass=MarkerRepository::class)
  */
-class Markers
+class Marker
 {
     /**
      * @ORM\Id
@@ -38,6 +39,12 @@ class Markers
      * @ORM\Column(type="string", length=255)
      */
     private $filename;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="markers")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $owner;
 
     public function getId(): ?int
     {
@@ -82,7 +89,7 @@ class Markers
 
     public function getFilename(): ?string
     {
-        return $this->filename;
+        return  $this->filename;
     }
 
     public function setFilename(string $filename): self
@@ -91,4 +98,22 @@ class Markers
 
         return $this;
     }
+
+    public function getImagePath(): ?string
+    {
+        return UploaderHelper::MARKER_IMAGE_FOLDER . '/' . $this->filename;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
 }

@@ -3,12 +3,11 @@
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Gedmo\Sluggable\Util\Urlizer;
 
 class UploaderHelper
 {
+        const MARKER_IMAGE_FOLDER = 'images';
 
     private $uploadsPath;
 
@@ -17,16 +16,20 @@ class UploaderHelper
         $this->uploadsPath = $uploadsPath;
     }
 
+    public function getPublicPath(string $path): string 
+    {
+        return 'uploads/' . $path;
+    }
+
     public function uploadImage(UploadedFile $uploadedFile): string
     {
-        $destination = $this->uploadsPath . '/images';
+        $destination = $this->uploadsPath . '/' . self::MARKER_IMAGE_FOLDER;
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
         $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
 
         $uploadedFile->move($destination, $newFilename);
 
         return $newFilename;
-
     }
 
 }
