@@ -22,6 +22,7 @@ class MarkerController
         $marker = new Marker();
         $marker->setLat($request->request->get('lat'));
         $marker->setLng($request->request->get('lng'));
+        $marker->setOwner($request->request->get('owner'));
         $marker->setDescription('test desc');
         $marker->setFilename($newFilename);
 
