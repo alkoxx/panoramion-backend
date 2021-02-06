@@ -3,12 +3,23 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\CreateFileObjectAction;
 use App\Repository\MarkerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Service\UploaderHelper;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *      itemOperations={"get", "put", "delete",
+ *          "add_file"={
+ *              "method"="POST",
+ *              "path"="/markers/{id}/file",
+ *              "controller"=CreateFileObjectAction::class
+ *          }
+ *    }
+ * )
  * @ORM\Entity(repositoryClass=MarkerRepository::class)
  */
 class Marker
@@ -36,15 +47,20 @@ class Marker
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $filename;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="markers")
      * @ORM\JoinColumn(nullable=false)
      */
     private $owner;
+
+    /**
+     * @ORM\OneToMany(targetEntity=FileObject::class, mappedBy="marker", orphanRemoval=true)
+     */
+    private $fileObjects;
+
+    public function __construct()
+    {
+        $this->fileObjects = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -86,24 +102,7 @@ class Marker
 
         return $this;
     }
-
-    public function getFilename(): ?string
-    {
-        return  $this->filename;
-    }
-
-    public function setFilename(string $filename): self
-    {
-        $this->filename = $filename;
-
-        return $this;
-    }
-
-    public function getImagePath(): ?string
-    {
-        return UploaderHelper::MARKER_IMAGE_FOLDER . '/' . $this->filename;
-    }
-
+    
     public function getOwner(): ?User
     {
         return $this->owner;
@@ -112,6 +111,36 @@ class Marker
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|FileObject[]
+     */
+    public function getFileObjects(): Collection
+    {
+        return $this->fileObjects;
+    }
+
+    public function addFileObject(FileObject $fileObject): self
+    {
+        if (!$this->fileObjects->contains($fileObject)) {
+            $this->fileObjects[] = $fileObject;
+            $fileObject->setMarker($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFileObject(FileObject $fileObject): self
+    {
+        if ($this->fileObjects->removeElement($fileObject)) {
+            // set the owning side to null (unless already changed)
+            if ($fileObject->getMarker() === $this) {
+                $fileObject->setMarker(null);
+            }
+        }
 
         return $this;
     }
