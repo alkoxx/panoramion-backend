@@ -12,11 +12,30 @@ use App\Service\UploaderHelper;
 
 /**
  * @ApiResource(
+ *      attributes={"pagination_enabled"=false},
  *      itemOperations={"get", "put", "delete",
  *          "add_file"={
  *              "method"="POST",
  *              "path"="/markers/{id}/file",
- *              "controller"=CreateFileObjectAction::class
+ *              "deserialize"=false,
+ *              "controller"=CreateFileObjectAction::class,
+ *              "openapi_context"={
+ *                 "requestBody"={
+ *                     "content"={
+ *                         "multipart/form-data"={
+ *                             "schema"={
+ *                                 "type"="object",
+ *                                 "properties"={
+ *                                     "file"={
+ *                                         "type"="string",
+ *                                         "format"="binary"
+ *                                     }
+ *                                 }
+ *                             }
+ *                         }
+ *                     }
+ *                 }
+ *             }
  *          }
  *    }
  * )
