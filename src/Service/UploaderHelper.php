@@ -7,7 +7,7 @@ use Gedmo\Sluggable\Util\Urlizer;
 
 class UploaderHelper
 {
-        const MARKER_IMAGE_FOLDER = 'images';
+    const MARKER_IMAGE_FOLDER = 'images';
 
     private $uploadsPath;
 
@@ -16,9 +16,9 @@ class UploaderHelper
         $this->uploadsPath = $uploadsPath;
     }
 
-    public function getPublicPath(string $path): string 
+    public function getPrivatePath(): string 
     {
-        return 'uploads/' . $path;
+        return $this->uploadsPath . '/' . self::MARKER_IMAGE_FOLDER;
     }
 
     public function uploadImage(UploadedFile $uploadedFile): string
@@ -30,6 +30,17 @@ class UploaderHelper
         $uploadedFile->move($destination, $newFilename);
 
         return $newFilename;
+    }
+
+    public function readStream(string $path){
+
+        $filesystem = $isPublic ? $this->filesystem : $this->privateFilesystem;
+        $resource = $filesystem->readStream($path);
+        if ($resource === false) {
+            throw new \Exception(sprintf('Error opening stream for "%s"', $path));
+        }
+        return $resource;
+
     }
 
 }

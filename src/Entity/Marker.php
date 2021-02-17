@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Controller\CreateFileObjectAction;
+use App\Controller\GetFileObjectAction;
 use App\Repository\MarkerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,8 +14,19 @@ use App\Service\UploaderHelper;
 /**
  * @ApiResource(
  *      attributes={"pagination_enabled"=false},
- *      itemOperations={"get", "put", "delete",
+ *      itemOperations={
+ *          "get" = {"security"="object.getOwner() == user"},
+ *          "put" = {"security"="object.getOwner() == user"},
+ *          "delete" = {"security"="object.getOwner() == user"},
+ *          "get_file"={
+ *              "security"="object.getOwner() == user",
+ *              "method"="GET",
+ *              "path"="/markers/{id}/file",
+ *              "deserialize"=false,
+ *              "controller"=GetFileObjectAction::class
+ *          },
  *          "add_file"={
+ *              "security"="object.getOwner() == user",
  *              "method"="POST",
  *              "path"="/markers/{id}/file",
  *              "deserialize"=false,
@@ -36,8 +48,9 @@ use App\Service\UploaderHelper;
  *                     }
  *                 }
  *             }
- *          }
- *    }
+ *          },
+ *          
+ *      }
  * )
  * @ORM\Entity(repositoryClass=MarkerRepository::class)
  */
